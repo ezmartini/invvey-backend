@@ -1,13 +1,13 @@
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
-  username: String,
-  businessName: String,
+  username: { type: String, required: true },
+  businessName: { type: String, required: true },
   collections: [{ type: mongoose.Types.ObjectId, ref: "Collection" }],
   products: [{ type: mongoose.Types.ObjectId, ref: "Product" }],
-  password: String,
+  password: { type: String, required: true },
 });
 
 const User = mongoose.model("User", userSchema);
 
-module.exports = User;
+export default User;
