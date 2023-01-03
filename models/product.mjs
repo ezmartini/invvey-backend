@@ -13,6 +13,8 @@ const productSchema = new mongoose.Schema({
   lowStockQuantity: Number,
   isLowStock: { type: Boolean, default: false },
   collection: { type: mongoose.Types.ObjectId, ref: "Collection" },
+  dateCreated: { type: Date, default: Date.now() },
+  dateLastUpdated: { type: Date, default: Date.now() },
 });
 
 productSchema.plugin(mongooseSlugPlugin, {
