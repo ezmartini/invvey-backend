@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
 import mongodb from "mongodb";
+import mongoose from "mongoose";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -10,7 +11,7 @@ const PORT = process.env.PORT || 5000;
 
 const uri = process.env.DB_CNXN;
 
-const client = new mongodb.MongoClient(uri, {
+mongoose.connect(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
