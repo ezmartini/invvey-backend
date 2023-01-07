@@ -2,16 +2,15 @@ import mongoose from "mongoose";
 import mongooseSlugPlugin from "mongoose-slug-plugin";
 
 const productSchema = new mongoose.Schema({
+  createdBy: String,
   name: String,
   units: String,
   isArchived: { type: Boolean, default: false },
-  isRetail: { type: Boolean, default: false },
-  description: String,
-  purchasePrice: Number,
-  sellPrice: Number,
+  description: { type: String, default: "No description provided." },
+  purchasePrice: String,
   currentQuantity: Number,
   lowStockQuantity: Number,
-  isLowStock: { type: Boolean, default: false },
+  stockStatus: String,
   collection: { type: mongoose.Types.ObjectId, ref: "Collection" },
   dateCreated: { type: Date, default: Date.now() },
   dateLastUpdated: { type: Date, default: Date.now() },

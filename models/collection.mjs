@@ -2,9 +2,10 @@ import mongoose from "mongoose";
 import mongooseSlugPlugin from "mongoose-slug-plugin";
 
 const collectionSchema = new mongoose.Schema({
-  name: String,
+  name: { type: String, default: "Untilted" },
   description: String,
-  contents: [{ type: mongoose.Types.ObjectId, ref: "Product" }],
+  allProducts: [{ type: mongoose.Types.ObjectId, ref: "Product" }],
+  // last updated
 });
 
 collectionSchema.plugin(mongooseSlugPlugin, {

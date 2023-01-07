@@ -79,7 +79,7 @@ router.post(
   "/register",
   passport.authenticate("local-register"),
   function (req, res) {
-    // on successful register
+    console.log(req.user);
   }
 );
 
@@ -87,7 +87,7 @@ router.post(
   "/login",
   passport.authenticate("local-login"),
   function (req, res) {
-    // on successful login
+    console.log("correct");
   }
 );
 export default router;
