@@ -6,12 +6,16 @@ import bcrypt from "bcrypt";
 import Users from "../models/user.mjs";
 import User from "../models/user.mjs";
 
+import jwt from "jsonwebtoken";
+
+import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
+
 import dotenv from "dotenv";
 dotenv.config();
 
 const router = express.Router();
 
-// local strategies
+// split up into at least 2 files!
 
 passport.use(
   "local-register",
@@ -78,16 +82,40 @@ passport.use(
 router.post(
   "/register",
   passport.authenticate("local-register"),
-  function (req, res) {
-    console.log(req.user);
-  }
+  function (req, res) {}
+);
+
+const opts = {};
+
+opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+opts.secretOrKey = process.env.JWT_SECRET;
+
+passport.use(
+  new JwtStrategy(opts, async (jwt_payload, done) => {
+    try {
+      const user = await User.findById(jwt_payload.userId);
+      if (user) {
+        const copy = user;
+        copy.password = "[redacted]";
+        return done(null, copy);
+      }
+      return done(null, false);
+    } catch (err) {
+      console.error(err);
+    }
+  })
 );
 
 router.post(
   "/login",
   passport.authenticate("local-login"),
   function (req, res) {
-    console.log("correct");
+    console.log(process.env.JWT_SECRET);
+    const token = jwt.sign({ userId: req.user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
+    res.status(200).json({ token });
   }
 );
+
 export default router;

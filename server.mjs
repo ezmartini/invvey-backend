@@ -9,6 +9,8 @@ import session from "express-session";
 
 import UsersRoute from "./routes/users.mjs";
 
+import ProductsRoute from "./routes/products.mjs";
+
 dotenv.config();
 
 const app = express();
@@ -41,7 +43,9 @@ passport.serializeUser(function (user, done) {
 passport.deserializeUser(function (user, done) {
   done(null, user);
 });
+
 app.use("/api/users", UsersRoute);
+app.use("/api/products", ProductsRoute);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
