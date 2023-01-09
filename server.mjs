@@ -7,6 +7,8 @@ import dotenv from "dotenv";
 import passport from "passport";
 import session from "express-session";
 
+import User from "./models/user.mjs";
+
 import UsersRoute from "./routes/users.mjs";
 
 dotenv.config();
@@ -39,7 +41,7 @@ passport.serializeUser(function (user, done) {
 });
 
 passport.deserializeUser(function (user, done) {
-  done(null, user);
+  done(err, user);
 });
 app.use("/api/users", UsersRoute);
 

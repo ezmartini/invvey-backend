@@ -1,48 +1,51 @@
 import express from "express";
 import passport from "passport";
-import { Strategy as LocalStrategy } from "passport-local";
-import bcrypt from "bcrypt";
-
+import dotenv from "dotenv";
 import Users from "../models/user.mjs";
 import User from "../models/user.mjs";
-
-import dotenv from "dotenv";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 dotenv.config();
+
+import { Strategy as LocalStrategy } from "passport-local";
 
 const router = express.Router();
 
-// local strategies
-
-passport.use(
-  "local-register",
-  new LocalStrategy(
-    {
-      usernameField: "username",
-      passwordField: "password",
-      passReqToCallback: true,
-    },
-    function (req, username, password, done) {
-      Users.findOne({ username: req.body.username }, function (err, user) {
+router.post("/register", function (req, res) {
+  Users.findOne({ username: req.body.username }, function (err, user) {
+    if (err) {
+      return res.status(500).json({ success: false, message: "Server error" });
+    }
+    if (user) {
+      return res
+        .status(409)
+        .json({ success: false, message: "Username already exists." });
+    } else {
+      const newUser = new User({
+        username: req.body.username,
+        password: req.body.password,
+        businessName: req.body.businessName,
+      });
+      newUser.save(function (err) {
         if (err) {
-          return done(err);
-        }
-        if (user) {
-          return done(null, false, { message: "Username already exists!" });
+          return res
+            .status(500)
+            .json({ success: false, message: "Server error" });
         } else {
-          const newUser = new User({
-            username: username,
-            password: password,
-            businessName: req.body.businessName,
-          });
-          newUser.save(function (err) {
-            if (err) throw err;
-            return done(null, newUser);
+          req.logIn(newUser, function (err) {
+            if (err) {
+              return res
+                .status(500)
+                .json({ success: false, message: "Server error" });
+            } else {
+              return res.status(200).json({ success: true });
+            }
           });
         }
       });
     }
-  )
-);
+  });
+});
 
 passport.use(
   "local-login",
@@ -52,6 +55,7 @@ passport.use(
       passwordField: "password",
       passReqToCallback: true,
     },
+
     function (req, username, password, done) {
       Users.findOne({ username: username }, async function (err, user) {
         if (!user) {
@@ -76,18 +80,11 @@ passport.use(
 );
 
 router.post(
-  "/register",
-  passport.authenticate("local-register"),
-  function (req, res) {
-    console.log(req.user);
-  }
-);
-
-router.post(
   "/login",
-  passport.authenticate("local-login"),
+  passport.authenticate("local-login", { session: false }),
   function (req, res) {
-    console.log("correct");
+    const token = jwt.sign({ id: req.user._id }, process.env.JWT_SECRET);
+    return res.status(200).json({ success: true, token: token });
   }
 );
 export default router;
