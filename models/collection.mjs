@@ -14,4 +14,4 @@ collectionSchema.plugin(mongooseSlugPlugin, {
 
 const Collection = mongoose.model("Collection", collectionSchema);
 
-module.exports = Collection;
+export default Collection;

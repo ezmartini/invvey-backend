@@ -1,7 +1,6 @@
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
-import mongodb from "mongodb";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import passport from "passport";
@@ -11,6 +10,7 @@ import UsersRoute from "./routes/users.mjs";
 
 import ProductsRoute from "./routes/products.mjs";
 import ProductRoute from "./routes/product.mjs";
+import CollectionRoute from "./routes/collection.mjs";
 
 dotenv.config();
 
@@ -48,6 +48,7 @@ passport.deserializeUser(function (user, done) {
 app.use("/api/users", UsersRoute);
 app.use("/api/products", ProductsRoute);
 app.use("/api/product", ProductRoute);
+app.use("/api/collection", CollectionRoute);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
