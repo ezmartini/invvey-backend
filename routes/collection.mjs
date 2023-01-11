@@ -28,4 +28,5 @@ router.post("/", passport.authenticate("jwt"), function (req, res) {
     res.status(200).json({ success: true, newCollection });
   });
 });
+
 export default router;

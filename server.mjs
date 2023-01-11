@@ -11,6 +11,7 @@ import UsersRoute from "./routes/users.mjs";
 import ProductsRoute from "./routes/products.mjs";
 import ProductRoute from "./routes/product.mjs";
 import CollectionRoute from "./routes/collection.mjs";
+import CollectionsRoute from "./routes/collections.mjs";
 
 dotenv.config();
 
@@ -49,6 +50,7 @@ app.use("/api/users", UsersRoute);
 app.use("/api/products", ProductsRoute);
 app.use("/api/product", ProductRoute);
 app.use("/api/collection", CollectionRoute);
+app.use("/api/collections", CollectionsRoute);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
