@@ -7,10 +7,13 @@ export async function hashPassword(password) {
 }
 
 export function calculateStockStatus(curr, low) {
-  if (curr <= 0) {
+  const current = +curr;
+  const lower = +low;
+
+  if (current <= 0) {
     return "Zero";
   }
-  if (curr > low) {
+  if (current > lower) {
     return "OK";
   } else {
     return "Low";

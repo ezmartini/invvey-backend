@@ -2,7 +2,9 @@ import express from "express";
 import passport from "passport";
 import Product from "../models/product.mjs";
 import User from "../models/user.mjs";
+import { ObjectId } from "mongodb";
 import { calculateStockStatus } from "../utils.mjs";
+import Collection from "../models/collection.mjs";
 const router = express.Router();
 
 router.post("/", passport.authenticate("jwt"), function (req, res) {
@@ -11,6 +13,11 @@ router.post("/", passport.authenticate("jwt"), function (req, res) {
     req.body.currentStock,
     req.body.lowStock
   );
+
+  console.log(stockStatus);
+
+  const inSavedCollection = ObjectId.isValid(req.body.inCollection);
+
   const newProduct = new Product({
     name: req.body.productName,
     description:
@@ -21,6 +28,7 @@ router.post("/", passport.authenticate("jwt"), function (req, res) {
     lowStockQuantity: req.body.lowStock,
     idealQuantity: req.body.idealStock,
     stockStatus,
+    collectionName: inSavedCollection ? req.body.inCollection : undefined,
   });
 
   newProduct.save(async function (err, doc) {
@@ -33,6 +41,13 @@ router.post("/", passport.authenticate("jwt"), function (req, res) {
         { _id: req.user._id },
         { $push: { products: newProduct } }
       );
+
+      if (inSavedCollection) {
+        const addToCollection = await Collection.findOneAndUpdate(
+          { _id: req.body.inCollection },
+          { $push: { allProducts: newProduct } }
+        );
+      }
     }
 
     res.status(200).json({ success: true, newProduct });
