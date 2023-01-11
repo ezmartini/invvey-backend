@@ -2,16 +2,18 @@ import mongoose from "mongoose";
 import mongooseSlugPlugin from "mongoose-slug-plugin";
 
 const productSchema = new mongoose.Schema({
-  createdBy: String,
   name: String,
-  units: String,
+  createdBy: String,
   isArchived: { type: Boolean, default: false },
   description: { type: String, default: "No description provided." },
-  purchasePrice: String,
   currentQuantity: Number,
   lowStockQuantity: Number,
   stockStatus: String,
-  collection: { type: mongoose.Types.ObjectId, ref: "Collection" },
+  idealQuantity: Number,
+  collectionName: {
+    type: mongoose.Types.ObjectId,
+    ref: "Collection",
+  },
   dateCreated: { type: Date, default: Date.now() },
   dateLastUpdated: { type: Date, default: Date.now() },
 });
@@ -22,4 +24,4 @@ productSchema.plugin(mongooseSlugPlugin, {
 
 const Product = mongoose.model("Product", productSchema);
 
-module.exports = Product;
+export default Product;

@@ -10,6 +10,7 @@ import session from "express-session";
 import UsersRoute from "./routes/users.mjs";
 
 import ProductsRoute from "./routes/products.mjs";
+import ProductRoute from "./routes/product.mjs";
 
 dotenv.config();
 
@@ -46,6 +47,7 @@ passport.deserializeUser(function (user, done) {
 
 app.use("/api/users", UsersRoute);
 app.use("/api/products", ProductsRoute);
+app.use("/api/product", ProductRoute);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

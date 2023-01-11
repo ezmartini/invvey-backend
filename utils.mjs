@@ -5,3 +5,14 @@ export async function hashPassword(password) {
   let hash = await bcrypt.hash(password, salt);
   return hash;
 }
+
+export function calculateStockStatus(curr, low) {
+  if (curr <= 0) {
+    return "Zero";
+  }
+  if (curr > low) {
+    return "OK";
+  } else {
+    return "Low";
+  }
+}
