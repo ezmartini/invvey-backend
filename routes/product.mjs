@@ -60,7 +60,14 @@ router.get("/:slug", passport.authenticate("jwt"), async function (req, res) {
   }
 
   // check if user has access to product
-  const userProducts = await req.user.populate("products");
+  const userProducts = await req.user.populate({
+    path: "products",
+    populate: {
+      path: "collectionName",
+      model: "Collection",
+    },
+  });
+
   for (const userProduct of req.user.products) {
     if (userProduct.slug === req.params.slug) {
       return res.status(200).json({ product: userProduct });

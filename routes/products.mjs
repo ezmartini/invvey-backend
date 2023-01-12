@@ -1,11 +1,15 @@
 import express from "express";
 import passport from "passport";
-
+import Collection from "../models/collection.mjs";
 const router = express.Router();
 
 router.get("/all", passport.authenticate("jwt"), async function (req, res) {
   await req.user.populate({
     path: "products",
+    populate: {
+      path: "collectionName",
+      model: "Collection",
+    },
     options: { sort: { dateCreated: -1 } },
   });
 
