@@ -118,4 +118,15 @@ router.post(
   }
 );
 
+router.get("/me", function (req, res) {
+  if (req.user === undefined) {
+    res
+      .status(401)
+      .json({
+        message: "Make sure you're logged in before accessing protected pages.",
+      });
+  }
+
+  res.status(200);
+});
 export default router;

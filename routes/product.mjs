@@ -77,27 +77,26 @@ router.get("/:slug", passport.authenticate("jwt"), async function (req, res) {
 
 router.post("/edit", passport.authenticate("jwt"), async function (req, res) {
   const prop = req.query.prop;
-  const stock = req.query.change;
 
+  console.log("editing", req.query);
   if (prop === "idealQuantity") {
-    const product = await Product.findOneAndUpdate(
+    await Product.findOneAndUpdate(
       { _id: req.query.id },
-      { $set: { idealQuantity: stock } }
+      { $set: { idealQuantity: req.query.change } }
     );
-    return res.send(200);
   } else if (prop === "lowStockQuantity") {
-    const product = await Product.findOneAndUpdate(
+    await Product.findOneAndUpdate(
       { _id: req.query.id },
-      { $set: { lowStockQuantity: stock } }
+      { $set: { lowStockQuantity: req.query.change } }
     );
   } else {
     await Product.findOneAndUpdate(
       { _id: req.query.id },
       { $set: { currentQuantity: req.query.stock } }
     );
-
-    return res.send(200);
   }
+
+  return res.status(200).json({ success: true });
 });
 
 export default router;

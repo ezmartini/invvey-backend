@@ -8,14 +8,21 @@ import { model } from "mongoose";
 const router = express.Router();
 
 router.get("/", passport.authenticate("jwt"), async function (req, res) {
-  await req.user.populate({
-    path: "collections",
-    populate: {
-      path: "allProducts",
-      model: "Product",
-    },
-    options: { sort: { dateCreated: -1 } },
-  });
+  const query = req.query;
+  let opts = {};
+
+  async function populateCollections(opts) {
+    await req.user.populate({
+      path: "collections",
+      populate: {
+        path: "allProducts",
+        model: "Product",
+      },
+      options: opts,
+    });
+  }
+
+  await populateCollections();
 
   if (req.user.populated("collections")) {
     return res.status(200).json({ collections: req.user.collections });
