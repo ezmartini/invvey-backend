@@ -7,8 +7,16 @@ export async function hashPassword(password) {
 }
 
 export function calculateStockStatus(curr, low) {
-  const current = +curr;
-  const lower = +low;
+  let current = curr;
+  let lower = low;
+
+  if (isNaN(current)) {
+    current = +current;
+  }
+
+  if (isNaN(low)) {
+    lower = +low;
+  }
 
   if (current <= 0) {
     return "Zero";

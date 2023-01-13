@@ -8,7 +8,6 @@ import Collection from "../models/collection.mjs";
 const router = express.Router();
 
 router.post("/", passport.authenticate("jwt"), function (req, res) {
-  console.log(req.body);
   const stockStatus = calculateStockStatus(
     req.body.currentStock,
     req.body.lowStock
@@ -74,6 +73,31 @@ router.get("/:slug", passport.authenticate("jwt"), async function (req, res) {
     }
   }
   return res.status(500).json({ message: "Request cannot be fulfilled." });
+});
+
+router.post("/edit", passport.authenticate("jwt"), async function (req, res) {
+  const prop = req.query.prop;
+  const stock = req.query.change;
+
+  if (prop === "idealQuantity") {
+    const product = await Product.findOneAndUpdate(
+      { _id: req.query.id },
+      { $set: { idealQuantity: stock } }
+    );
+    return res.send(200);
+  } else if (prop === "lowStockQuantity") {
+    const product = await Product.findOneAndUpdate(
+      { _id: req.query.id },
+      { $set: { lowStockQuantity: stock } }
+    );
+  } else {
+    await Product.findOneAndUpdate(
+      { _id: req.query.id },
+      { $set: { currentQuantity: req.query.stock } }
+    );
+
+    return res.send(200);
+  }
 });
 
 export default router;
