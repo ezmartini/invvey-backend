@@ -11,6 +11,8 @@ router.get("/", passport.authenticate("jwt"), async function (req, res) {
   const query = req.query;
   let opts = {};
 
+  console.log(query);
+
   async function populateCollections(opts) {
     await req.user.populate({
       path: "collections",
@@ -22,13 +24,47 @@ router.get("/", passport.authenticate("jwt"), async function (req, res) {
     });
   }
 
-  await populateCollections();
+  if (req.query.filter) {
+    if (req.query.filter === "noDesc") {
+      await populateCollections();
+      const found = req.user.collections.filter((collection) => {
+        return !collection.description;
+      });
 
-  if (req.user.populated("collections")) {
-    return res.status(200).json({ collections: req.user.collections });
-  } else {
-    return res.status(500).json({ message: "Internal server error " });
+      return res.status(200).json({ collections: found });
+    } else if (req.query.filter === "yesDesc") {
+      await populateCollections();
+      const found = req.user.collections.filter((collection) => {
+        return collection.description;
+      });
+
+      return res.status(200).json({ collections: found });
+    }
   }
+
+  if (req.query.search) {
+    await populateCollections();
+    const found = req.user.collections.filter((collection) =>
+      collection.name.toLowerCase().includes(req.query.search.toLowerCase())
+    );
+    return res.status(200).json({ collections: found });
+  }
+
+  if (req.query.sort) {
+    if (req.query.sort === "alphaAtoZ") {
+      opts = { sort: { name: 1 } };
+    }
+
+    if (req.query.sort === "alphaZtoA") {
+      opts = { sort: { name: -1 } };
+    }
+
+    await populateCollections(opts);
+    return res.status(200).json({ collections: req.user.collections });
+  }
+
+  await populateCollections();
+  return res.status(200).json({ collections: req.user.collections });
 });
 
 export default router;

@@ -78,7 +78,6 @@ router.get("/:slug", passport.authenticate("jwt"), async function (req, res) {
 router.post("/edit", passport.authenticate("jwt"), async function (req, res) {
   const prop = req.query.prop;
 
-  console.log("editing", req.query);
   if (prop === "idealQuantity") {
     await Product.findOneAndUpdate(
       { _id: req.query.id },
