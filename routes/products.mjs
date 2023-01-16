@@ -27,6 +27,7 @@ router.get("/", passport.authenticate("jwt"), async function (req, res) {
   console.log(req.query);
 
   let products = req.user.products;
+  let options;
 
   async function populateUser(opts) {
     await req.user.populate({
@@ -54,6 +55,10 @@ router.get("/", passport.authenticate("jwt"), async function (req, res) {
     await populateCollection();
   }
 
+  if (!req.query.collection) {
+    await populateUser();
+  }
+
   if (req.query.search) {
     const found = products.filter((product) =>
       product.name.toLowerCase().includes(req.query.search.toLowerCase())
@@ -73,7 +78,6 @@ router.get("/", passport.authenticate("jwt"), async function (req, res) {
 
   if (req.query.sort) {
     const sortBy = req.query.sort;
-    let options;
 
     // more clever way to do this using params!!
     if (sortBy === "mostRecent") {
@@ -95,8 +99,10 @@ router.get("/", passport.authenticate("jwt"), async function (req, res) {
     } else {
       await populateCollection(options);
     }
-    return res.status(200).json({ products });
   }
+
+  console.log("returning");
+  return res.status(200).json({ products });
 });
 
 export default router;

@@ -118,15 +118,13 @@ router.post(
   }
 );
 
-router.get("/me", function (req, res) {
+router.get("/me", passport.authenticate("jwt"), function (req, res) {
   if (req.user === undefined) {
-    res
-      .status(401)
-      .json({
-        message: "Make sure you're logged in before accessing protected pages.",
-      });
+    res.status(401).json({
+      message: "Make sure you're logged in before accessing protected pages.",
+    });
   }
 
-  res.status(200);
+  res.status(200).json({ name: req.user.businessName });
 });
 export default router;
