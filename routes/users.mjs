@@ -26,6 +26,7 @@ passport.use(
       passReqToCallback: true,
     },
     function (req, username, password, done) {
+      console.log("here");
       Users.findOne({ username: req.body.username }, function (err, user) {
         if (err) {
           return done(err);
@@ -110,7 +111,6 @@ router.post(
   "/login",
   passport.authenticate("local-login"),
   function (req, res) {
-    console.log(process.env.JWT_SECRET);
     const token = jwt.sign({ userId: req.user._id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
@@ -119,12 +119,6 @@ router.post(
 );
 
 router.get("/me", passport.authenticate("jwt"), function (req, res) {
-  if (req.user === undefined) {
-    res.status(401).json({
-      message: "Make sure you're logged in before accessing protected pages.",
-    });
-  }
-
   res.status(200).json({ name: req.user.businessName });
 });
 export default router;
